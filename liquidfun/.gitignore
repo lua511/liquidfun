@@ -4,8 +4,6 @@
 *.class
 *.a
 *~
-*.vcxproj
-*.vcxproj.filters
 *.vcxproj.user
 *.sln
 *.suo

@@ -100,7 +100,7 @@ void init()
 
 	g_particle = Box2DCreateParticleSystem(g_box2dWorld, 0.5, 0, 1, 100);
 
-	Box2DCreateParticleGroup(g_particle, 10, 10);
+	Box2DCreateParticleGroup(g_particle, 10, 10,5,5);
 }
 
 void cleanup()

@@ -19,13 +19,15 @@ extern "C"
 
 	_declspec(dllexport) void Box2DDestroyParticleSystem(void* pworld,void* particlesys);
 
-	_declspec(dllexport) int Box2DCreateParticle(void* ptr, float x, float y);
+	_declspec(dllexport) int Box2DCreateParticle(void* ptr, float x, float y,float r);
+
+	_declspec(dllexport) int Box2DCreateParticleInRect(void* ptr, float x, float y, float w, float h, int count);
 
 	_declspec(dllexport) void Box2DDestroyParticle(void* ptr, int pid);
 
 	_declspec(dllexport) void Box2DDestroyParticlesInShape(void* ptr, float x, float y, float w, float h);
 
-	_declspec(dllexport) void Box2DCreateParticleGroup(void* particleSys, float w, float h);
+	_declspec(dllexport) void Box2DCreateParticleGroup(void* particleSys, float x,float y,float w, float h);
 
 	_declspec(dllexport) void Box2DSetMaxParticle(void* ptr, int count);
 

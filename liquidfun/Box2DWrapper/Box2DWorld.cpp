@@ -3,17 +3,31 @@
 
 #pragma comment(lib,"liquidfun.lib")
 
+static b2World*	g_lastWorld = NULL;
+static b2ParticleSystem* g_lastParticleSystem = NULL;
 
 void* Box2DCreateWorld(float gx, float gy)
 {
+	if (g_lastParticleSystem != NULL && g_lastWorld != NULL)
+	{
+		g_lastWorld->DestroyParticleSystem(g_lastParticleSystem);
+		g_lastParticleSystem = NULL;
+	}
+	if (g_lastWorld != NULL)
+	{
+		delete g_lastWorld;
+		g_lastWorld = NULL;
+	}
 	b2Vec2 bv(gx, gy);
 	b2World* p = new b2World(bv);
+	g_lastWorld = p;
 	return (void*)p;
 }
 
 void Box2DReleaseWorld(void* ptr)
 {
 	b2World* p = (b2World*)ptr;
+	g_lastWorld = NULL;
 	delete p;
 }
 
@@ -63,7 +77,12 @@ void* Box2DCreateParticleSystem(void* ptr, float radius, float damping, float gr
 	def.gravityScale = graviityScale;
 	def.maxCount = number;	
 	b2World* p = (b2World*)ptr;
+	if (g_lastParticleSystem != NULL)
+	{
+		p->DestroyParticleSystem(g_lastParticleSystem);
+	}
 	b2ParticleSystem* pPart = p->CreateParticleSystem(&def);
+	g_lastParticleSystem = pPart;
 	return (void*)pPart;
 }
 
@@ -77,11 +96,26 @@ void Box2DDestroyParticleSystem(void* pworld, void* particlesys)
 int Box2DCreateParticle(void* ptr, float x, float y)
 {
 	b2ParticleDef	pd;
-	pd.flags = b2_elasticParticle;
+	pd.flags = b2_waterParticle;
 	pd.color.Set(0, 0, 255, 255);
 	pd.position.Set(x, y);
 	b2ParticleSystem* p = (b2ParticleSystem*)ptr;
 	return p->CreateParticle(pd);
+}
+
+int Box2DCreateParticleInRect(void* ptr, float x, float y, float w, float h, int count)
+{
+	for (int i = 0; i < count; ++i)
+	{
+		b2ParticleDef	pd;
+		pd.flags = b2_waterParticle;
+		pd.color.Set(0, 0, 255, 255);
+		pd.position.Set(x, y);
+		pd.velocity.y = -5;
+		b2ParticleSystem* p = (b2ParticleSystem*)ptr;
+		p->CreateParticle(pd);
+	}
+	return 0;
 }
 
 void Box2DDestroyParticle(void* ptr, int pid)
@@ -99,19 +133,20 @@ void Box2DDestroyParticlesInShape(void* ptr, float x, float y, float w, float h)
 	center.x = x;
 	center.y = y;
 	tr.Set(center, 0);
-	sp.SetAsBox(w, h);
+	sp.SetAsBox(w/2, h/2);
 	p->DestroyParticlesInShape(sp,tr);
 }
 
-void Box2DCreateParticleGroup(void* particleSys, float w, float h)
+void Box2DCreateParticleGroup(void* particleSys, float x, float y, float w, float h)
 {
 	b2ParticleGroupDef	pd;
 	pd.flags = b2_waterParticle;
 	b2PolygonShape shape2;
-	shape2.SetAsBox(w, h, b2Vec2(0.0f, 0.0f), 0.0);
+	shape2.SetAsBox(w/2, h/2, b2Vec2(x, y), 0.0);
 	pd.shape = &shape2;
+	pd.group = NULL;
 	b2ParticleSystem* p = (b2ParticleSystem*)particleSys;
-	p->CreateParticleGroup(pd);
+	b2ParticleGroup* pg = p->CreateParticleGroup(pd);
 }
 
 void Box2DSetMaxParticle(void* ptr, int count)

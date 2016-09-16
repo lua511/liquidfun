@@ -38,7 +38,7 @@ float Box2DStepWorld(void* ptr, float timestep, int velocitIt, int positionIt, i
 	return timestep;
 }
 
-void* Box2DCreateBody(void* world, int tp, float xc, float yc)
+void* Box2DCreateBody(void* world, int tp, float xc, float yc, float radians)
 {
 	b2World* p = (b2World*)world;
 
@@ -49,7 +49,7 @@ void* Box2DCreateBody(void* world, int tp, float xc, float yc)
 	}
 	def.type = (b2BodyType)tp;
 	def.position.Set(xc, yc);
-	
+	def.angle = radians;
 	b2Body* body = p->CreateBody(&def);
 	return (void*)body;
 }
@@ -158,8 +158,10 @@ void Box2DSetMaxParticle(void* ptr, int count)
 void Box2DSetBodyTrans(void* ptr, float x, float y, float fv)
 {
 	b2Body* p = (b2Body*)ptr;
-	const b2Transform& tr = p->GetTransform();
-	p->SetTransform(tr.p, fv);
+	b2Vec2 b2v;
+	b2v.x = x;
+	b2v.y = y;
+	p->SetTransform(b2v, fv);
 }
 
 void Box2DGetBodyTrans(void* ptr, float& x, float& y, float& a)

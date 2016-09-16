@@ -11,7 +11,7 @@ extern "C"
 
 	_declspec(dllexport) float	Box2DStepWorld(void* ptr, float timestep, int velocitIt, int positionIt, int particleIt);
 
-	_declspec(dllexport) void*	Box2DCreateBody(void* world,int tp, float xc, float yc);
+	_declspec(dllexport) void*	Box2DCreateBody(void* world,int tp, float xc, float yc,float radians);
 
 	_declspec(dllexport) void Box2DCreateFixture(void* ptr, float x, float y, float density, float restitution);
 
